@@ -2,12 +2,13 @@
 Copyright © 2022 Leonardo Souza <leogsouza@gmail.com>
 Copyrights apply to this source code.
 Check LICENSE for details.
-
 */
 package cmd
 
 import (
 	"fmt"
+	"os/exec"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -22,21 +23,39 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+
+		localArgs := []string{"list"}
+		run, err := cmd.Flags().GetBool("run")
+		if err != nil {
+			return err
+		}
+
+		if !run {
+			localArgs = append(localArgs, "vms")
+		} else {
+			localArgs = append(localArgs, "runningvms")
+		}
+
+		out, err := exec.Command("vboxmanage", localArgs...).Output()
+		if err != nil {
+			return err
+		}
+		// TODO: Parse the output
+		fmt.Println("OUTPUT: ", string(out))
+		strFields := strings.Fields(string(out))
+		for _, str := range strFields {
+			s := strings.Split(str, " ")
+			fmt.Println(s[0])
+		}
+		return nil
 	},
 }
+
+var run bool
 
 func init() {
 	rootCmd.AddCommand(listCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	listCmd.PersistentFlags().BoolVarP(&run, "run", "r", false, "List only the running vms")
 }
