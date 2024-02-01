@@ -2,7 +2,6 @@
 Copyright © 2022 Leonardo Souza <leogsouza@gmail.com>
 Copyrights apply to this source code.
 Check LICENSE for details.
-
 */
 package cmd
 
@@ -12,18 +11,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "vm-cli",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "vmcli",
+	Short: "An application that helps to manage vms",
+	Long:  `This CLI helps to start and stop the local virtual boxes VMs without using the GUI`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -49,5 +41,3 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
-
-

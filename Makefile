@@ -6,12 +6,9 @@ BINARY_DIR=bin
 build-linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 ${GO_BUILD} -o ${BINARY_DIR}/${BINARY_NAME}
 build-windows:
-	GOOS=windows GOARCH=amd64 ${GO_BUILD} -o ${BINARY_DIR}/${BINARY_NAME}.exe
+	${GO_BUILD} -o ${BINARY_DIR}/${BINARY_NAME}.exe
 
-build: build-linux build-windows
-	
-
-	
+build: build-windows
 
 run: build
 	@./${BINARY_DIR}/${BINARY_NAME}
