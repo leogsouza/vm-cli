@@ -8,7 +8,7 @@ package cmd
 import (
 	"fmt"
 	"os/exec"
-	"strings"
+	"regexp"
 
 	"github.com/spf13/cobra"
 )
@@ -16,20 +16,12 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "List the VMs created locally",
+	Long: `This command lists the VMs. If pass the flag -r
+	will list only the running VMs`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		localArgs := []string{"list"}
-		run, err := cmd.Flags().GetBool("run")
-		if err != nil {
-			return err
-		}
 
 		if !run {
 			localArgs = append(localArgs, "vms")
@@ -41,13 +33,19 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			return err
 		}
-		// TODO: Parse the output
-		fmt.Println("OUTPUT: ", string(out))
-		strFields := strings.Fields(string(out))
-		for _, str := range strFields {
-			s := strings.Split(str, " ")
-			fmt.Println(s[0])
+
+		r := regexp.MustCompile(`\S+`)
+		outStr := string(out)
+		arrStr := r.FindAllString(outStr, -1)
+		vms := []string{}
+		for _, str := range arrStr {
+			if str[0] == '"' {
+				vms = append(vms, str)
+			}
 		}
+		// TODO: Display data with more details
+		fmt.Println("VMS", vms)
+
 		return nil
 	},
 }
